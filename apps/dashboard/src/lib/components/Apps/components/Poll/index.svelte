@@ -5,7 +5,7 @@
   import Poll from './components/Poll.svelte';
   import Tabs from './components/Tabs.svelte';
   import { polls } from './store';
-  import type { PollType, TabsType, PollOptionsSubmissionType } from './types';
+  import type { PollType, TabsType, PollOptionsSubmissionType, FetchPollsResponse } from './types';
   import { apps } from '$lib/components/Apps/store';
   import { getSupabase } from '$lib/utils/functions/supabase';
   import { profile } from '$lib/utils/store/user';
@@ -36,6 +36,7 @@
     fullname: '',
     avatarUrl: ''
   };
+  let pollChannel: RealtimeChannel;
   let pollSubmissionsChannel: RealtimeChannel;
 
   let tabs: TabsType = [];
@@ -186,6 +187,94 @@
     };
   }
 
+  async function handlePollInsert(payload: RealtimePostgresChangesPayload<FetchPollsResponse>) {
+    const insertedPoll = payload.new as FetchPollsResponse;
+    console.log(insertedPoll);
+    return;
+
+    const {
+      data,
+      error
+    }: PostgrestSingleResponse<{
+      newPoll: {
+        id: string;
+        courseId: string;
+        expiration: string;
+        authorId: string;
+        status: string;
+        question: string;
+        created_at: string;
+        author: {
+          profile: {
+            username: string;
+            fullname: string;
+            avatar_url: string;
+          };
+        };
+        options: {
+          id: string;
+          label: string;
+          submissions: {
+            selectedBy: {
+              id: string;
+              profile: {
+                username: string;
+                fullname: string;
+                avatar_url: string;
+              };
+            };
+          }[];
+        }[];
+      };
+    }> = await supabase
+      .from('apps_poll')
+      .select(
+        `
+      *,
+      id,
+      courseId,
+      expiration,
+      authorId,
+      status,
+      question,
+      created_at,
+      author:groupmember(
+        profile(
+          username,
+          fullname,
+          avatar_url
+        )
+      ),
+      options: apps_poll_option (
+        id,
+        label,
+        submissions:apps_poll_submission(
+          selectedBy:groupmember(
+            id,
+            profile(
+              username,
+              fullname,
+              avatar_url
+            )
+          )
+        )
+      )
+    `
+      )
+      .eq(
+        'id',
+        insertedPoll.map((poll) => poll.id)
+      )
+      .single();
+
+    console.log('updatedPoll => data', data);
+    console.log('updatedPoll => error', error);
+
+    if (error || !data) {
+      return;
+    }
+  }
+
   onMount(async () => {
     if (!$course.id) return;
 
@@ -204,6 +293,15 @@
 
     isLoading = false;
 
+    pollChannel = supabase
+      .channel('any')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'apps_poll' },
+        handlePollInsert
+      )
+      .subscribe();
+
     pollSubmissionsChannel = supabase
       .channel('any')
       .on(
@@ -215,6 +313,7 @@
   });
 
   onDestroy(() => {
+    supabase.removeChannel(pollChannel);
     supabase.removeChannel(pollSubmissionsChannel);
   });
 
