@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import HelpIcon from 'carbon-icons-svelte/lib/Help.svelte';
   import ForumIcon from 'carbon-icons-svelte/lib/Forum.svelte';
-
+  import PrimaryButton from '$lib/components/PrimaryButton/index.svelte';
   import TextChip from '$lib/components/Chip/Text.svelte';
   import OrgSelector from '$lib/components/OrgSelector/OrgSelector.svelte';
   import HomeIcon from '$lib/components/Icons/HomeIcon.svelte';
@@ -15,6 +15,8 @@
   import { profile } from '$lib/utils/store/user';
   import { NavClasses } from '$lib/utils/constants/reusableClass';
   import { sideBar } from './store';
+  import { isUpgradeModalOpen } from './UpgradePlan/store';
+  import UpgradePlanModal from './UpgradePlan/UpgradePlanModal.svelte';
 
   const menuItems = [
     {
@@ -56,17 +58,22 @@
   const toggleSidebar = () => {
     $sideBar.hidden = !$sideBar.hidden;
   };
+
+  const openModal = () => {
+    $isUpgradeModalOpen = true;
+  };
 </script>
 
+<UpgradePlanModal />
 <aside
   class={`${
     $sideBar.hidden
-      ? '-translate-x-[100%] absolute md:translate-x-0 md:relative z-40'
-      : 'translate-x-0 absolute md:relative z-40'
-  } overflow-y-auto transition w-[250px] min-w-[250px] bg-gray-100 dark:bg-neutral-900 h-[calc(100vh-48px)] border border-l-0 border-t-0 border-b-0 border-r-1`}
+      ? 'absolute z-40 -translate-x-[100%] md:relative md:translate-x-0'
+      : 'absolute z-40 translate-x-0 md:relative'
+  } border-r-1 h-[calc(100vh-48px)] w-[250px] min-w-[250px] overflow-y-auto border border-b-0 border-l-0 border-t-0 bg-gray-100 transition dark:bg-neutral-900`}
 >
-  <div class="h-full flex flex-col">
-    <div class="border-b border-gray-200 pt-5 px-4">
+  <div class="flex h-full flex-col">
+    <div class=" px-4 pt-5">
       {#if $currentOrg.avatar_url && $currentOrg.name}
         <Avatar
           src={$currentOrg.avatar_url}
@@ -92,7 +99,7 @@
             on:click={toggleSidebar}
           >
             <li
-              class="flex items-center py-3 px-4 mb-2 {NavClasses.item} {isActive(
+              class="mb-2 flex items-center px-4 py-3 {NavClasses.item} {isActive(
                 $page.url.pathname,
                 `${$currentOrgPath}${menuItem.path}`
               )
@@ -106,7 +113,7 @@
               {:else if menuItem.path === '/site'}
                 <SiteSettingsIcon />
               {:else if menuItem.path === '/community'}
-                <ForumIcon size={24} class="carbon-icon dark:fill-[#fff] fill-[#000]" />
+                <ForumIcon size={24} class="carbon-icon fill-[#000] dark:fill-[#fff]" />
               {:else if menuItem.path === '/quiz'}
                 <QuizIcon />
               {:else if menuItem.path === '/audience'}
@@ -118,17 +125,29 @@
         {/each}
       </ul>
     </div>
+
+    <div
+      class="border-primary-700 mx-4 flex flex-col items-center justify-center gap-4 rounded-md border px-2 py-6 text-center hover:scale-95 transition-all ease-in-out"
+    >
+      <img src="/upgrade.png" alt="upgrade" class="h-16 w-16" />
+      <span class="flex flex-col gap-1">
+        <p class="text-base font-semibold">Become an Early Adopter</p>
+        <p class="text-xs">Unlock unlimited features and invest in our future</p>
+      </span>
+      <PrimaryButton label="Upgrade Now" onClick={openModal} className="font-normal" />
+    </div>
+
     <span class="flex-grow" />
-    <ul class="my-5 pb-5 px-4">
+    <ul class="my-5 px-4 pb-5">
       <a href={$currentOrgPath} class="text-black no-underline" on:click={toggleSidebar}>
-        <li class="flex items-center py-3 px-4 mb-2 rounded">
+        <li class="mb-2 flex items-center rounded px-4 py-3">
           <HelpIcon size={20} class="carbon-icon dark:text-white" />
-          <p class="dark:text-white ml-2">Help</p>
+          <p class="ml-2 dark:text-white">Help</p>
         </li>
       </a>
       <a href="{$currentOrgPath}/settings" class="text-black no-underline" on:click={toggleSidebar}>
         <li
-          class="flex items-center py-3 px-4 mb-2 {NavClasses.item} {isActive(
+          class="mb-2 flex items-center px-4 py-3 {NavClasses.item} {isActive(
             $page.url.pathname,
             `${$currentOrgPath}/settings`
           )

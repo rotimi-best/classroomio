@@ -101,6 +101,9 @@ importers:
       remark-unwrap-images:
         specifier: ^4.0.0
         version: 4.0.0
+      shared-constants:
+        specifier: workspace:*
+        version: link:../../packages/shared-constants
       shiki:
         specifier: ^0.14.7
         version: 0.14.7
@@ -159,6 +162,9 @@ importers:
       '@defer/client':
         specifier: ^2.2.0
         version: 2.2.0
+      '@lemonsqueezy/lemonsqueezy.js':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@sentry/browser':
         specifier: ^7.61.0
         version: 7.61.0
@@ -207,6 +213,9 @@ importers:
       copy-to-clipboard:
         specifier: ^3.3.3
         version: 3.3.3
+      crypto:
+        specifier: ^1.0.1
+        version: 1.0.1
       d3:
         specifier: ^7.8.5
         version: 7.8.5
@@ -243,6 +252,9 @@ importers:
       posthog-js:
         specifier: ^1.103.0
         version: 1.103.1
+      shared-constants:
+        specifier: workspace:*
+        version: link:../../packages/shared-constants
       sirv:
         specifier: ^2.0.3
         version: 2.0.3
@@ -425,6 +437,12 @@ importers:
       typescript:
         specifier: ^5.1.6
         version: 5.3.2
+
+  packages/shared-constants:
+    dependencies:
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
 
   packages/svelte-ui:
     devDependencies:
@@ -3743,6 +3761,11 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  /@lemonsqueezy/lemonsqueezy.js@2.2.0:
+    resolution: {integrity: sha512-DsZTeowehSLTESUZ6xxoYPDhoE8BYepWsj3TCqibG7FvB8X1HERPXQlc6E/IeGj22SOfIM997b7GfFkeLWY8pA==}
+    engines: {node: '>=18'}
+    dev: false
 
   /@mapbox/node-pre-gyp@1.0.11:
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
@@ -7904,6 +7927,11 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /crypto@1.0.1:
+    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
+    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
+    dev: false
 
   /css-tree@2.3.1:
     resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
