@@ -21,6 +21,7 @@ interface ProfileStore {
   goal: string;
   source: string;
   telegram_chat_id: number | null;
+  language: string;
   is_email_verified: boolean;
   verified_at: string;
 }
@@ -44,6 +45,7 @@ export const defaultProfileState: ProfileStore = {
   goal: '',
   source: '',
   telegram_chat_id: null,
+  language: '',
   is_email_verified: false,
   verified_at: ''
 };

@@ -15,31 +15,31 @@
   import { profile } from '$lib/utils/store/user';
   import { NavClasses } from '$lib/utils/constants/reusableClass';
   import { sideBar } from './store';
+  import { t } from '$lib/utils/functions/translations';
 
-  const menuItems = [
+  interface menuItems {
+    label: string;
+    path: string;
+  }
+
+  let menuItems: menuItems[] = [];
+
+  $: menuItems = [
     {
       path: '',
-      label: 'Dashboard'
+      label: $t('org_navigation.dashboard')
     },
-    // {
-    //   path: '/quiz',
-    //   label: 'Quizzes'
-    // },
     {
       path: '/courses',
-      label: 'Courses'
+      label: $t('org_navigation.courses')
     },
     {
       path: '/community',
-      label: 'Community'
+      label: $t('org_navigation.community')
     },
-    // {
-    //   path: '/site',
-    //   label: 'Site settings',
-    // },
     {
       path: '/audience',
-      label: 'Audience'
+      label: $t('org_navigation.audience')
     }
   ];
 
@@ -123,7 +123,7 @@
       <a href={$currentOrgPath} class="text-black no-underline" on:click={toggleSidebar}>
         <li class="flex items-center py-3 px-4 mb-2 rounded">
           <HelpIcon size={20} class="carbon-icon dark:text-white" />
-          <p class="dark:text-white ml-2">Help</p>
+          <p class="dark:text-white ml-2">{$t('org_navigation.help')}</p>
         </li>
       </a>
       <a href="{$currentOrgPath}/settings" class="text-black no-underline" on:click={toggleSidebar}>
@@ -136,7 +136,7 @@
             : 'dark:text-white'}"
         >
           <Avatar src={$profile.avatar_url} name={$profile.username} width="w-7" height="h-7" />
-          <p class="ml-2">Settings</p>
+          <p class="ml-2">{$t('org_navigation.settings')}</p>
         </li>
       </a>
     </ul>
