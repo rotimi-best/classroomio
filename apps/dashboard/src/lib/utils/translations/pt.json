@@ -407,11 +407,17 @@
         "locked": "Bloqueado",
         "unlocked": "Desbloqueado",
         "save": "Salvar alterações",
-        "unlocked_certificate": "Certificado já está disponível",
         "locked_certificate": "Certificados não disponíveis",
         "instructor_unlock": "Seu instrutor precisa desbloquear seu certificado.",
         "contact_instructor": "Se precisar do seu certificado, entre em contato com seu instrutor.",
-        "download_certificate": "Certificado de download"
+        "download_certificate": "Certificado de download",
+        "unlocked_certificate": "Parabéns! 🎉 seu certificado está pronto",
+        "unlocked_certificate_subtitle": "Você concluiu este curso e sua dedicação é evidente. Baixe o certificado e compartilhe com sua rede como prova de sua habilidade recém-adquirida",
+        "complete_to_download_subtitle": "Seu certificado estará disponível assim que você concluir todas as lições e exercícios deste curso",
+        "complete_to_download_title": "Curso não concluído 😔",
+        "description_error": "A descrição não pode exceder 200 caracteres",
+        "characters": "personagens",
+        "unexpected_error": "Um erro inesperado ocorreu"
       },
       "people": {
         "title": "Pessoas",
