@@ -32,6 +32,7 @@
   export let currency = 'NGN';
   export let isOnLandingPage = false;
   export let isLMS = false;
+  export let isExplore = false;
   export let progressRate = 45;
   export let type: COURSE_TYPE;
 
@@ -60,7 +61,7 @@
   }
 
   function getCourseUrl() {
-    return isOnLandingPage
+    return isOnLandingPage || isExplore
       ? `/course/${slug}`
       : `/courses/${id}${isLMS ? '/lessons?next=true' : ''}`;
   }
@@ -175,15 +176,17 @@
               : formatter.format(cost)}</span
           >
         {:else if isLMS}
-          <div class="flex items-center gap-2">
-            <div class=" relative bg-[#EAEAEA] w-[50px] h-1">
-              <div
-                style="width:{progressRate}%"
-                class={`absolute top-0 left-0 bg-primary-700 h-full`}
-              />
+          {#if !isExplore}
+            <div class="flex items-center gap-2">
+              <div class=" relative bg-[#EAEAEA] w-[50px] h-1">
+                <div
+                  style="width:{progressRate}%"
+                  class={`absolute top-0 left-0 bg-primary-700 h-full`}
+                />
+              </div>
+              <p class="text-xs text-[#656565] dark:text-white">{progressRate}%</p>
             </div>
-            <p class="text-xs text-[#656565] dark:text-white">{progressRate}%</p>
-          </div>
+          {/if}
         {:else}
           <Tag type={isPublished ? 'green' : 'cool-gray'}>
             {#if isPublished}
@@ -198,7 +201,9 @@
 
     {#if isLMS}
       <PrimaryButton
-        label={$t('courses.course_card.continue_course')}
+        label={isExplore
+          ? $t('courses.course_card.learn_more')
+          : $t('courses.course_card.continue_course')}
         variant={VARIANTS.OUTLINED}
         className="rounded-none"
       />
