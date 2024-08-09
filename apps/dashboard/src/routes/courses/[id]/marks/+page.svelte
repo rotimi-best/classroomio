@@ -21,6 +21,10 @@
   import { currentOrg } from '$lib/utils/store/org';
   import type { CurrentOrg } from '$lib/utils/types/org';
   import type { GroupPerson } from '$lib/utils/types';
+  import Papa from 'papaparse';
+  import html2pdf from 'html2pdf.js';
+  import { OverflowMenu, OverflowMenuItem } from 'carbon-components-svelte';
+  import Download from 'carbon-icons-svelte/lib/Download.svelte';
 
   export let data;
 
@@ -95,6 +99,64 @@
     return roles;
   }
 
+  const downloadCSV = () => {
+    let exportData = students.map((student) => {
+      let rowData = { name: student.profile.fullname };
+      let totalPoints = calculateStudentTotal(studentMarksByExerciseId[student.id]);
+
+      $lessons.forEach((lesson, lessonIndex) => {
+        const quizzes = lessonMapping[lesson.id];
+        const quizMark = studentMarksByExerciseId[student.id];
+
+        Object.keys(quizzes).forEach((quizId, quizIndex) => {
+          const quiz = quizzes[quizId];
+          const title = quiz.title;
+          rowData[`lesson_${lessonIndex + 1}_quiz_${quizIndex + 1}: ${title}`] =
+            quizMark[quizId] || '-';
+        });
+      });
+
+      rowData.total = totalPoints;
+      return rowData;
+    });
+
+    const csv = Papa.unparse(exportData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${$course?.title}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadPDF = () => {
+    const element = document.getElementById('tableContainer');
+
+    if (!element) {
+      console.error('Table container not found');
+      return;
+    }
+
+    const options = {
+      margin: 0.5,
+      filename: `${$course?.title}-marks.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Start the PDF generation
+    html2pdf()
+      .from(element)
+      .set(options)
+      .save()
+      .catch((error) => {
+        console.error('Error generating PDF:', error);
+      });
+  };
+
   $: students = $globalStore.isStudent
     ? $group.people.filter((person) => !!person.profile && person.profile.id === $profile.id)
     : $group.people.filter((person) => !!person.profile && person.role_id === ROLE.STUDENT);
@@ -109,10 +171,19 @@
       goto(`/courses/${data.courseId}/lessons?next=true`);
     }}
   >
-    <PageNav title={$t('course.navItem.marks.title')} />
+    <PageNav title={$t('course.navItem.marks.title')}>
+      <slot:fragment slot="widget">
+        <RoleBasedSecurity allowedRoles={[1, 2]}>
+          <OverflowMenu icon={Download} flipped size="xl">
+            <OverflowMenuItem text={$t('course.navItem.marks.export.csv')} on:click={downloadCSV} />
+            <OverflowMenuItem text={$t('course.navItem.marks.export.pdf')} on:click={downloadPDF} />
+          </OverflowMenu>
+        </RoleBasedSecurity>
+      </slot:fragment>
+    </PageNav>
 
     <PageBody width="w-full max-w-6xl md:w-11/12">
-      <div class="table rounded-md border border-gray-300 w-full">
+      <div id="tableContainer" class="table rounded-md border border-gray-300 w-full">
         <div class="flex items-center {borderBottomGrey}">
           <div class="box flex items-center p-3">
             <p class="dark:text-white w-40">{$t('course.navItem.marks.student')}</p>

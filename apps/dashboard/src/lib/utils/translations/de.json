@@ -475,7 +475,11 @@
         "title": "Markierungen",
         "student": "Student",
         "total": "Gesamt",
-        "no_student": "Kein Student hinzugefügt"
+        "no_student": "Kein Student hinzugefügt",
+        "export": {
+          "csv": "als csv exportieren",
+          "pdf": "als PDF exportieren"
+        }
       },
       "submissions": {
         "title": "Eingereichte Übungen",
