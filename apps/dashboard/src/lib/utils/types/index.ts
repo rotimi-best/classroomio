@@ -1,6 +1,14 @@
 export * from './config';
 export * from './dashboard';
 
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
+
+
 export enum LOCALE {
   EN = 'en',
   HI = 'hi',
@@ -420,4 +428,14 @@ export interface Review {
 interface Tabs {
   id: number;
   name: string;
+}
+
+export interface Batch {
+  id?: any;
+  name?: string;
+  is_active?: boolean;
+  organization_id?: any;
+  course_id?: any;
+  description?: string;
+  groupmember?: Groupmember[];
 }
